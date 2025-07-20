@@ -1,0 +1,62 @@
+--[[
+CodeExecutor (ModuleScript) - CORRECTED VERSION
+Version: 1.0
+Author: xgabrix79x (known as sqldev)
+
+--]]
+-- ========== CONVERSION FUNCTIONS ==========
+
+local CodeExecutor = {}
+
+-- Converts ANY number into a binary string
+function CodeExecutor.toBinary(number)
+	if number == 0 then return "0" end
+	local binaryString = ""
+	while number > 0 do
+		local remainder = number % 2
+		binaryString = tostring(remainder) .. binaryString
+		number = math.floor(number / 2)
+	end
+	return binaryString
+end
+
+-- Converts ANY binary string back into a number
+function CodeExecutor.fromBinary(binaryString)
+	local number = 0
+	for i = 1, #binaryString do
+		if string.sub(binaryString, i, i) == "1" then
+			number = number + 2^(#binaryString - i)
+		end
+	end
+	return number
+end
+
+-- ========== ENCODING AND DECODING LOGIC ==========
+
+function CodeExecutor.encrypt(originalNumber)
+	local binaryValue = CodeExecutor.toBinary(originalNumber)
+	local bitCount = #binaryValue -- Store the original bit count
+	
+	local reversedBinary = string.reverse(binaryValue)
+	local encryptedNumber = CodeExecutor.fromBinary(reversedBinary)
+	
+	-- Return both the encrypted number and the bit count
+	return encryptedNumber, bitCount
+end
+
+function CodeExecutor.decrypt(encryptedNumber, bitCount)
+	local binaryValue = CodeExecutor.toBinary(encryptedNumber)
+	
+	-- Pad with leading zeros to restore the original length
+	local missingZeros = bitCount - #binaryValue
+	if missingZeros > 0 then
+		binaryValue = string.rep("0", missingZeros) .. binaryValue
+	end
+	
+	local reversedBinary = string.reverse(binaryValue)
+	local decryptedNumber = CodeExecutor.fromBinary(reversedBinary)
+	
+	return decryptedNumber
+end
+
+return CodeExecutor
