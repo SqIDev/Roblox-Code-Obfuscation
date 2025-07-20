@@ -1,0 +1,57 @@
+--[[
+VirtualMachine (Encryption and Decryption manager) - Script
+Version: 1.0
+Author: xgabrix79x (known as sqldev)
+--]]
+
+local CodeExecutor = require(script.Parent.CodeExecutor)
+local messageToObfuscate = 73946826612
+
+-- --- ENCRYPTION ---
+print("--- Encryption Start ---")
+print("Original Number:", messageToObfuscate)
+-- Capture both return values (the number and the length)
+local encryptedMessage, originalBitCount = CodeExecutor.encrypt(messageToObfuscate)
+print("Encrypted Number:", encryptedMessage)
+print("Original Bit Count:", originalBitCount)
+print("--- Encryption End ---")
+
+
+-- --- DECRYPTION ---
+print("\n--- Decryption Start ---")
+print("Number to Decrypt:", encryptedMessage)
+-- Pass both values to the decryption function
+local decryptedMessage = CodeExecutor.decrypt(encryptedMessage, originalBitCount)
+print("Decrypted Message:", decryptedMessage)
+print("--- Decryption End ---")
+
+
+-- --- FINAL CHECK ---
+if decryptedMessage == messageToObfuscate then
+	print("\nSUCCESS: The original and decrypted numbers match!")
+else
+	print("\nERROR: The numbers do not match.")
+end
+
+
+-- --- RUNNING AUTOMATED TESTS ---
+print("\n\n--- RUNNING AUTOMATED TESTS ---")
+local testNumbers = {0, 1, 10, 255, 99999, 73946826612, 1837498172394712}
+local allTestsPassed = true
+for _, originalNumber in ipairs(testNumbers) do
+	local encrypted, bitCount = CodeExecutor.encrypt(originalNumber)
+	local decrypted = CodeExecutor.decrypt(encrypted, bitCount)
+	local didPass = (decrypted == originalNumber)
+	
+	print("Test:", originalNumber, " | Match:", didPass)
+	
+	if not didPass then
+		allTestsPassed = false
+	end
+end
+
+if allTestsPassed then
+	print("--- ALL TESTS PASSED! ---")
+else
+	print("--- SOME TESTS FAILED! ---")
+end
